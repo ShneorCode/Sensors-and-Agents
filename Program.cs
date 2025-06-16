@@ -1,10 +1,8 @@
-﻿using System;
-
-class Program
+﻿class Program
 {
     static void Main()
     {
         InvestigationManager manager = new InvestigationManager();
-        manager.StartInvestigation();
+        manager.Run();
     }
 }

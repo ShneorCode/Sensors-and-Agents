@@ -8,23 +8,20 @@ public class InvestigationManager
 
     public InvestigationManager()
     {
-        // יצירת סוכן עם תמהיל חולשות סודי
-        List<string> weaknesses = new List<string> { "Thermal", "Thermal" };
-        agent = new IranianAgent(weaknesses);
+        agent = new IranianAgent(new List<string> { "Magnet", "Heat", "Magnet" });
 
-        // יצירת רשימת סנסורים זמינים לשחקן
         availableSensors = new List<Sensor>
         {
-            new Sensor("Thermal"),
-            new Sensor("Motion")
+            new Sensor("Laser"),
+            new Sensor("Motion"),
+            new Sensor("Sound"),
+            new Sensor("Magnet"),
+            new Sensor("Heat")
         };
     }
 
-    public void StartInvestigation()
+    public void Run()
     {
-        Console.WriteLine("Investigation started.");
-        Console.WriteLine("Each turn, select a sensor to attach to the agent.");
-
         while (!agent.IsExposed())
         {
             Console.WriteLine();
@@ -43,16 +40,18 @@ public class InvestigationManager
                 Sensor chosenSensor = availableSensors[choice - 1];
                 agent.AttachSensor(chosenSensor);
 
-                Console.WriteLine("Sensor attached. Checking for matches...");
-                bool exposed = agent.IsExposed();
+                int matches = agent.ActivateSensors();
+                int total = agent.GetWeaknessCount();
 
-                if (exposed)
+                Console.WriteLine($"Matched: {matches}/{total}");
+
+                if (matches >= total)
                 {
                     Console.WriteLine("The agent has been exposed!");
                 }
                 else
                 {
-                    Console.WriteLine("Not exposed yet. Continue investigation.");
+                    Console.WriteLine("Not exposed yet. Keep trying.");
                 }
             }
             else

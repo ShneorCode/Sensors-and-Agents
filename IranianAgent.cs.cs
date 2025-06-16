@@ -2,12 +2,12 @@
 
 public class IranianAgent
 {
-    private List<string> requiredSensorTypes;
+    private List<string> secretWeaknesses;
     private List<Sensor> attachedSensors;
 
-    public IranianAgent(List<string> requiredTypes)
+    public IranianAgent(List<string> weaknesses)
     {
-        requiredSensorTypes = requiredTypes;
+        secretWeaknesses = weaknesses;
         attachedSensors = new List<Sensor>();
     }
 
@@ -16,29 +16,35 @@ public class IranianAgent
         attachedSensors.Add(sensor);
     }
 
-    public bool IsExposed()
+    public int ActivateSensors()
     {
-        int correctCount = 0;
+        int matchCount = 0;
+        var uncoveredWeaknesses = new List<string>(secretWeaknesses);
 
         foreach (Sensor sensor in attachedSensors)
         {
-            foreach (string weakness in requiredSensorTypes)
+            for (int i = 0; i < uncoveredWeaknesses.Count; i++)
             {
-                if (sensor.Activate(weakness))
+                if (sensor.Activate(uncoveredWeaknesses[i]))
                 {
-                    correctCount++;
-                    break;
+                    matchCount++;
+                    uncoveredWeaknesses.RemoveAt(i); 
+                    break; 
                 }
             }
         }
 
-        if (correctCount >= requiredSensorTypes.Count)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return matchCount;
+    }
+
+
+    public int GetWeaknessCount()
+    {
+        return secretWeaknesses.Count;
+    }
+
+    public bool IsExposed()
+    {
+        return ActivateSensors() >= secretWeaknesses.Count;
     }
 }
